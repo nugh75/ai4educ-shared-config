@@ -1,4 +1,26 @@
 # Lista progetti ai4educ — un path per riga
 # Righe che iniziano con # sono ignorate
 
+/home/nugh75/ai4educ-chatbots
+/home/nugh75/ai4educ-console
+/home/nugh75/Ai-michelangelo/canvas-lms
+/home/nugh75/CNR-articolo-quantitativo
+/home/nugh75/counselorbot-alpha-v0.1-bussola-20241108
 /home/nugh75/counselorbot-sbs
+/home/nugh75/Daniele
+/home/nugh75/Esame Piattaforme digitali
+/home/nugh75/guida-ai
+/home/nugh75/hermes/hermes-agent
+/home/nugh75/hermes/hermes-workspace
+/home/nugh75/Lez7
+/home/nugh75/lezione
+/home/nugh75/OpenMontage/openmontage_engine
+/home/nugh75/praxis-kth-interviews
+/home/nugh75/Prin-orienta+
+/home/nugh75/Prin-orienta+/doaj-pp-cli
+/home/nugh75/Prin-orienta+/opac-sbn-pp-cli
+/home/nugh75/Prin-orienta+/openalex-pp-cli
+/home/nugh75/Prin-orienta+/semantic-scholar-pp-cli
+/home/nugh75/q-ai
+/home/nugh75/-qtimes
+/home/nugh75/scontrini
