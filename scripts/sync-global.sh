@@ -44,8 +44,12 @@ $GUIDELINES_CONTENT
 I blocchi canonici delle istruzioni vivono in \`$SHARED_CONFIG_DIR\`.
 Quando modifichi \`blocks/shared-rules.md\` o \`blocks/global-guidelines.md\`:
 1. \`git pull\` in \`$SHARED_CONFIG_DIR\`
-2. \`./scripts/sync-global.sh\`        — aggiorna i file globali (~/.pi, ~/.claude, ~/.codex, ~/.opencode)
-3. \`./scripts/sync-project.sh --all\`  — propaga le regole di processo a tutti i progetti
+2. \`r-cl-ag\`                              — riavvia l'host-agent (cloudflared-agent) dopo modifiche al codice
+3. \`./scripts/sync-global.sh\`        — aggiorna i file globali (~/.pi, ~/.claude, ~/.codex, ~/.opencode)
+4. \`./scripts/sync-project.sh --all\`  — propaga le regole di processo a tutti i progetti
+
+Alias utili:
+- \`r-cl-ag\` = \`sudo systemctl restart cloudflared-agent\` (in \`~/bin/r-cl-ag\`, nel PATH)
 
 I file \`AGENTS.md\` e \`CLAUDE.md\` nei progetti sono generati — **NON modificarli a mano**.
 \`CONTEXT.md\` invece è manuale e specifico per ogni progetto.

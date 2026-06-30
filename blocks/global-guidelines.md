@@ -98,3 +98,11 @@ Drop: articles (a/an/the), filler, pleasantries, hedging. Fragments OK. Short sy
 Default level: **full**. Switch: `/caveman lite|full|ultra`.
 
 Code, commits, PRs: always write normal regardless of mode.
+
+---
+
+## ai4educ Infrastructure
+
+- **Sync delle istruzioni**: vedi sezione generata in fondo al file (istruzioni di sync).
+- **\`r-cl-ag\`**: alias per \`sudo systemctl restart cloudflared-agent\`, riavvia l'host-agent dopo modifiche. Disponibile in \`~/bin/\`, nel PATH.
+- **Console**: disponibile su ai4educ.org, pannello "Config Docs" per gestire regole condivise e monitorare allineamento CONTEXT.md.
