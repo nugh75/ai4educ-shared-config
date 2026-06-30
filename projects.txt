@@ -1,0 +1,4 @@
+# Lista progetti ai4educ — un path per riga
+# Righe che iniziano con # sono ignorate
+
+/home/nugh75/counselorbot-sbs

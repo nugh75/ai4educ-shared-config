@@ -1,0 +1,59 @@
+# CONTEXT — {{PROJECT_NAME}}
+
+<!-- ai4educ:context-template v1.0 -->
+
+## Quick Reference
+- **Stack**: {{backend_framework}}, {{frontend_framework}}, {{database}}, {{infra}}
+- **Entry point**: {{how_to_start_dev}}
+- **Test**: {{how_to_run_tests}}
+- **Repo**: {{repo_url}}
+
+## Domain
+{{brief_description_3_5_sentences}}
+
+### Core Concepts
+- **{{Entity1}}**: {{brief_definition}}
+- **{{Entity2}}**: {{brief_definition}}
+
+### User Roles
+- **{{Role1}}**: {{what_they_can_do}}
+- **{{Role2}}**: {{what_they_can_do}}
+
+## Architecture
+{{architectural_pattern_if_relevant}}
+
+### Key Directories
+```
+backend/
+  routes/       — API endpoints
+  ...
+frontend/
+  src/
+    app/        — Next.js App Router pages
+    components/ — React components
+    lib/        — shared utilities, types, i18n
+  ...
+```
+
+### Key Files
+- `{{path}}` — {{what_it_contains_why_important}}
+- `{{path}}` — {{what_it_contains_why_important}}
+
+### Data Model (essential)
+{{key_tables_or_collections_with_relationships}}
+
+## Conventions
+- {{convention_1}}
+- {{convention_2}}
+
+## Common Tasks
+
+| Task | Command / Procedure |
+|---|---|
+| Avvio locale | `{{command}}` |
+| Test | `{{command}}` |
+| Seed DB | `{{command}}` |
+| {{task_4}} | {{how_to}} |
+
+## ADRs / Decisions
+{{link_to_adr_directory_or_key_decisions}}
