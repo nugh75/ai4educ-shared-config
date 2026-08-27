@@ -106,3 +106,4 @@ Code, commits, PRs: always write normal regardless of mode.
 - **Sync delle istruzioni**: vedi sezione generata in fondo al file (istruzioni di sync).
 - **\`r-cl-ag\`**: alias per \`sudo systemctl restart cloudflared-agent\`, riavvia l'host-agent dopo modifiche. Disponibile in \`~/bin/\`, nel PATH.
 - **Console**: disponibile su ai4educ.org, pannello "Config Docs" per gestire regole condivise e monitorare allineamento CONTEXT.md.
+- **Skill**: ogni agente legge una root diversa (`~/.claude/skills`, `~/.agents/skills`, `~/.pi/agent/skills`, `~/.config/opencode/skills`) e nessuno legge quelle degli altri. `./scripts/sync-skills.sh` allinea tutte e quattro le root a partire da `~/.agents/skills` e `~/ai4educ-console/workspace-skills`; viene eseguito in automatico da `sync-global.sh`.

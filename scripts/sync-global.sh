@@ -10,6 +10,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 GUIDELINES_FILE="$REPO_ROOT/blocks/global-guidelines.md"
+SKILLS_SCRIPT="$SCRIPT_DIR/sync-skills.sh"
 SHARED_CONFIG_DIR="$REPO_ROOT"
 VERSION="1.0"
 
@@ -47,6 +48,11 @@ Quando modifichi \`blocks/shared-rules.md\` o \`blocks/global-guidelines.md\`:
 2. \`r-cl-ag\`                              — riavvia l'host-agent (cloudflared-agent) dopo modifiche al codice
 3. \`./scripts/sync-global.sh\`        — aggiorna i file globali (~/.pi, ~/.claude, ~/.codex, ~/.opencode)
 4. \`./scripts/sync-project.sh --all\`  — propaga le regole di processo a tutti i progetti
+
+Le skill non stanno in questi file: ogni agente legge una root diversa
+(\`~/.claude/skills\`, \`~/.agents/skills\`, \`~/.pi/agent/skills\`, \`~/.config/opencode/skills\`).
+\`./scripts/sync-skills.sh\` le allinea tutte e quattro ed è già incluso in \`sync-global.sh\`;
+lanciarlo da solo dopo aver aggiunto o modificato una skill.
 
 Alias utili:
 - \`r-cl-ag\` = \`sudo systemctl restart cloudflared-agent\` (in \`~/bin/r-cl-ag\`, nel PATH)
@@ -95,6 +101,17 @@ sync_all() {
             echo -e "  ${GREEN}✓${NC} $tool_name: $target_path ($current_hash → $GUIDELINES_HASH)"
         fi
     done
+
+    sync_skills
+}
+
+sync_skills() {
+    if [[ ! -x "$SKILLS_SCRIPT" ]]; then
+        echo -e "  ${RED}✗${NC} Skill: script non trovato ($SKILLS_SCRIPT) — skip"
+        return 0
+    fi
+    echo -e "\nSincronizzazione skill..."
+    "$SKILLS_SCRIPT"
 }
 
 check_all() {
@@ -126,6 +143,15 @@ check_all() {
             echo -e "  ${GREEN}✓${NC} $tool_name"
         fi
     done
+
+    if [[ -x "$SKILLS_SCRIPT" ]]; then
+        if "$SKILLS_SCRIPT" --check >/dev/null 2>&1; then
+            echo -e "  ${GREEN}✓${NC} Skill"
+        else
+            echo -e "  ${RED}✗${NC} Skill: root non allineate (./scripts/sync-skills.sh)"
+            ok=false
+        fi
+    fi
 
     $ok
 }
