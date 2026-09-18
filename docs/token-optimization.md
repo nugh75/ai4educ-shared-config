@@ -82,5 +82,5 @@ bloatware di efficienza.
 | 2.4 Audit Checklist | ✅ blocco indice + questo doc |
 | 3.1 Nested Index refactor | ✅ indice a 73 righe (docs: karpathy-guidelines, interaction-modes) |
 | 3.2 MCP → CLI (genimg) | ✅ MCP rimosso da Codex, CLI `genimg` operativa |
-| 4.1 PDF-to-Text Hook | da fare |
+| 4.1 PDF-to-Text Hook | ⏸️ rimandato all'uso reale (cartella piano): bozza `scripts/pdf2md.py` pronta; valutare repo esistenti (`pymupdf4llm`, `marker`, `docling`) prima di finalizzare hook + MD con struttura |
 | 4.2 Graph-Based Retrieval | da fare |
