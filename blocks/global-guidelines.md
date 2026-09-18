@@ -37,6 +37,15 @@ Usare l'AI per il **judgment** (decisioni, progettazione, analisi); usare il **c
 - **Prompt poveri di contesto**: prompt brevi e vaghi generano interazioni multi-turno costose. Fornire fin da subito contesto, vincoli e output atteso.
 - **Bloatware di efficienza**: evitare wrapper di terze parti che promettono risparmi omettendo dati critici; preferire gli strumenti nativi dello strumento in uso.
 
+## Scheduled Token Audit
+
+Checklist di audit periodico (dettagli: `ai4educ-shared-config/docs/token-optimization.md`):
+
+1. **Script Conversion**: il task judgment-free è migrabile a Python/Bash?
+2. **Model Distillation**: la routine si può abbassare di tier?
+3. **Index Integrity**: i file globali restano sotto le 200 righe?
+4. **Baseline Audit**: la sessione parte a 3-6%? Token Leakage da MCP/skill inutilizzati?
+
 ## ASCII Prototyping
 
 Per lavori UI/UX, finalizzare la **struttura** in un diagramma ASCII (layout, gerarchie, stati) prima di generare codice (HTML/CSS/JSX). Iterare sul diagramma, non sul codice: elimina il ciclo costoso di rigenerazione di blocchi interi per aggiustamenti estetici. Passare al codice solo quando l'utente ha validato la struttura.
