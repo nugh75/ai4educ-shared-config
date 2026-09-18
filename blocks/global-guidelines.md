@@ -15,6 +15,16 @@ Gestione della storia di conversazione per contenere la crescita dei token:
 - **`/clear`**: reset al baseline, obbligatorio quando si pivota a un workstream non correlato. Prima di un `/clear` su lavoro non finito, scrivere un Handoff File (skill `handoff`).
 - **`/compact`**: da evitare. Consuma token per generare la sintesi e introduce rischi: il modello decide soggettivamente quali dettagli tecnici sono "disponibili". Preferire `/rewind` o l'Handoff File.
 
+## Golden Rule: AI for Judgment, Code for Execution
+
+Usare l'AI per il **judgment** (decisioni, progettazione, analisi); usare il **codice** per l'esecuzione. Qualsiasi routine AI che ripete sempre lo stesso task è candidata alla migrazione a script Python/Bash deterministico: progetto con l'AI una volta, poi lo script garantisce ripetibilità 100%, velocità massima e costo ricorrente zero.
+
+### Anti-pattern vietati
+
+- **Text screenshots**: non usare screenshot per catturare testo. Usare testo diretto o hook ottimizzati (es. PDF-to-Text): il parsing visivo costa in modo sproporzionato.
+- **Prompt poveri di contesto**: prompt brevi e vaghi generano interazioni multi-turno costose. Fornire fin da subito contesto, vincoli e output atteso.
+- **Bloatware di efficienza**: evitare wrapper di terze parti che promettono risparmi omettendo dati critici; preferire gli strumenti nativi dello strumento in uso.
+
 ## ASCII Prototyping
 
 Per lavori UI/UX, finalizzare la **struttura** in un diagramma ASCII (layout, gerarchie, stati) prima di generare codice (HTML/CSS/JSX). Iterare sul diagramma, non sul codice: elimina il ciclo costoso di rigenerazione di blocchi interi per aggiustamenti estetici. Passare al codice solo quando l'utente ha validato la struttura.
