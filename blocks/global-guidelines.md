@@ -15,6 +15,18 @@ Gestione della storia di conversazione per contenere la crescita dei token:
 - **`/clear`**: reset al baseline, obbligatorio quando si pivota a un workstream non correlato. Prima di un `/clear` su lavoro non finito, scrivere un Handoff File (skill `handoff`).
 - **`/compact`**: da evitare. Consuma token per generare la sintesi e introduce rischi: il modello decide soggettivamente quali dettagli tecnici sono "disponibili". Preferire `/rewind` o l'Handoff File.
 
+## Model Selection Matrix
+
+Abbinare l'intelligenza del modello alla complessità del task: usare un modello frontier per una routine è spesa inutile.
+
+| Task | Tier | Esempi |
+|---|---|---|
+| Architettura, debugging complesso, codice di produzione | Frontier | modelli di ragionamento massimo disponibili sul provider |
+| Routine standardizzate, drafting, refactoring semplice | Medio | il modello di fascia media del provider |
+| Sub-agent, browsing, estrazione bulk, analisi multi-fonte | Economico | modelli leggeri/veloci (efficiency leader) |
+
+**Mid-Session Switch Penalty**: non cambiare modello o effort level a conversazione in corso — il nuovo modello ricarica e rielabora tutta la storia, con costo di token massiccio e ridondante. Scegliere il modello all'inizio della sessione in base al task.
+
 ## Golden Rule: AI for Judgment, Code for Execution
 
 Usare l'AI per il **judgment** (decisioni, progettazione, analisi); usare il **codice** per l'esecuzione. Qualsiasi routine AI che ripete sempre lo stesso task è candidata alla migrazione a script Python/Bash deterministico: progetto con l'AI una volta, poi lo script garantisce ripetibilità 100%, velocità massima e costo ricorrente zero.
