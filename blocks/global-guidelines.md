@@ -35,6 +35,10 @@ Usare l'AI per il **judgment** (decisioni, progettazione, analisi); il **codice*
 
 Anti-pattern vietati: **text screenshots** (usare testo diretto o hook), **prompt poveri di contesto** (causano multi-turno costosi), **bloatware di efficienza** (wrapper di terze parti che omettono dati; preferire strumenti nativi).
 
+## Graph-Based Retrieval
+
+In repository con **più di 500 file di codice**, la ricerca "alla cieca" (aprire più file ridondanti) spreca token: appena ci si accorge di lavorare in un repo oltre soglia, **proporre all'utente** il recupero map-first con la skill `graphify` (mappa di nodi connessi → il modello va dritto al punto). Dettagli: `docs/token-optimization.md`.
+
 ## Scheduled Token Audit
 
 Checklist di audit periodico (dettagli: `docs/token-optimization.md`):
