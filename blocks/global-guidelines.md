@@ -1,5 +1,11 @@
 # Global Guidelines
 
+## ⚠️ Pending Task — eseguire PER PRIMO
+
+Eseguire il refactor della carta 3.1 (Nested Index) seguendo il piano in
+`ai4educ-shared-config/docs/nested-index-refactor-plan.md`. A lavoro completato,
+rimuovere questo blocco e aggiornare la tabella di stato in `docs/token-optimization.md`.
+
 ## Session Start Check (credits & context)
 
 Applicare a ogni sessione in qualsiasi agente terminale (Claude Code, Codex, OpenCode, pi), prima di qualsiasi lavoro:
