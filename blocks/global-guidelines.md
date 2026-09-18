@@ -7,6 +7,10 @@ Applicare a ogni sessione in qualsiasi agente terminale (Claude Code, Codex, Ope
 1. **Crediti/Limiti**: verificare che l'agente abbia crediti o quota disponibili (es. `/usage` in Claude Code, limiti in Codex, provider configurato in OpenCode/pi). Se i crediti sono esauriti o non disponibili, notificare immediatamente l'utente e fermarsi: non iniziare lavori che rischiano di interrompersi a metà.
 2. **Baseline context**: se lo strumento lo espone (`/context`, status line), rilevare l'occupazione iniziale del contesto. Se il baseline è anomalo (>10% prima del primo prompt), segnalarlo all'utente prima di procedere.
 
+## ASCII Prototyping
+
+Per lavori UI/UX, finalizzare la **struttura** in un diagramma ASCII (layout, gerarchie, stati) prima di generare codice (HTML/CSS/JSX). Iterare sul diagramma, non sul codice: elimina il ciclo costoso di rigenerazione di blocchi interi per aggiustamenti estetici. Passare al codice solo quando l'utente ha validato la struttura.
+
 ## Karpathy Coding Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes. Bias toward caution over speed. For trivial tasks, use judgment.
