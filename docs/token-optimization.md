@@ -77,7 +77,7 @@ bloatware di efficienza.
 | 2.2 Golden Rule + Anti-pattern | ✅ blocco indice |
 | 2.3 Model Selection Matrix | ✅ blocco indice |
 | 2.4 Audit Checklist | ✅ blocco indice + questo doc |
-| 3.1 Nested Index refactor | da fare |
+| 3.1 Nested Index refactor | ✅ indice a 73 righe (docs: karpathy-guidelines, interaction-modes) |
 | 3.2 MCP → CLI (genimg) | da fare |
 | 4.1 PDF-to-Text Hook | da fare |
 | 4.2 Graph-Based Retrieval | da fare |
