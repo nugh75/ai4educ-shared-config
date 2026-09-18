@@ -31,7 +31,7 @@ Riferimento framework: baseline atteso 3-6%; >10% prima del primo prompt indica 
 | Agente | MCP attivi | Costo stimato | Esito |
 |---|---|---|---|
 | Claude Code | nessuno | 0 | ✅ ottimale |
-| Codex | `genimg` (`~/.local/share/genimg-mcp/`) | basso (server piccolo, ~24KB) | ⚠️ valutare sostituzione CLI se usato raramente |
+| Codex | rimosso `genimg` MCP → sostituito da CLI `~/bin/genimg` | 0 | ✅ ottimale (carta 3.2) |
 | OpenCode | nessuno | 0 | ✅ ottimale |
 | pi | nessuno | 0 | ✅ ottimale |
 

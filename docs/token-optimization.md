@@ -35,6 +35,9 @@ primo prompt = Token Leakage (MCP inutilizzati, skill bloatate). Audit: `TOKEN-B
 
 ## 4. Advanced Efficiency
 
+- **genimg CLI** (ex MCP): generazione/modifica immagini da terminale. Sintassi:
+  `genimg "<prompt>" -o out.png [--engine openrouter|gemini|openai] [--model id] [--input img] [--aspect 16:9] [--size 1K]`.
+  I path relativi finiscono in `immagini/`. Disponibile in `~/bin/genimg` per tutti gli agenti (zero token di baseline).
 - **PDF-to-Text Hook**: leggere un PDF di 300 pagine da costi ~600k token in parsing visivo;
   un hook deterministico che estrae il testo lo riduce a ~150k (ROI 4x). Da implementare
   come hook su operazione di read (carta 4.1 del backlog).
@@ -78,6 +81,6 @@ bloatware di efficienza.
 | 2.3 Model Selection Matrix | ✅ blocco indice |
 | 2.4 Audit Checklist | ✅ blocco indice + questo doc |
 | 3.1 Nested Index refactor | ✅ indice a 73 righe (docs: karpathy-guidelines, interaction-modes) |
-| 3.2 MCP → CLI (genimg) | da fare |
+| 3.2 MCP → CLI (genimg) | ✅ MCP rimosso da Codex, CLI `genimg` operativa |
 | 4.1 PDF-to-Text Hook | da fare |
 | 4.2 Graph-Based Retrieval | da fare |
