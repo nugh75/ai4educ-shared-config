@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Convert local, text-based PDFs to Markdown without OCR or network calls."""
 import argparse
+from collections import Counter
 import contextlib
 import hashlib
 import importlib.metadata
@@ -11,12 +12,20 @@ import re
 import sys
 import tempfile
 
-VERSION = "1"
+VERSION = "2"
 PREFIX = "<!-- pdf2md "
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def retained_words(native, markdown):
+    def words(text):
+        text = re.sub(r"-\s*\n\s*", "", text.lower())
+        return Counter(re.findall(r"[^\W_]{3,}", text))
+    expected = words(native)
+    return sum((expected & words(markdown)).values()) / max(1, sum(expected.values()))
 
 
 def parse_pages(value, count):
@@ -117,6 +126,7 @@ def convert(source, output=None, *, pages=None, force=False):
             saved = metadata(previous)
             if not force and saved and all(saved.get(k) == v for k, v in identity.items()):
                 warn_missing(saved.get("textless_pages", []))
+                warn_plain(saved.get("plain_text_pages", []))
                 return previous.decode("utf-8"), True
             textless = [p + 1 for p in selected if not doc[p].get_text().strip()]
             if len(textless) == len(selected):
@@ -127,8 +137,15 @@ def convert(source, output=None, *, pages=None, force=False):
                 write_images=False, embed_images=False, margins=0,
             )
             sections = []
+            plain_pages = []
             for page, chunk in zip(selected, chunks, strict=True):
                 text = chunk["text"].strip()
+                native = doc[page].get_text("text", sort=True).strip()
+                # Some PDFs lose text in layout reconstruction (OCR layers,
+                # tiny fonts, overlays). Prefer complete text over layout.
+                if native and (not text or retained_words(native, text) < 0.98):
+                    text = native
+                    plain_pages.append(page + 1)
                 if page + 1 in textless or not text:
                     if page + 1 not in textless:
                         textless.append(page + 1)
@@ -137,9 +154,11 @@ def convert(source, output=None, *, pages=None, force=False):
             if len(textless) == len(selected):
                 raise ValueError("la conversione non ha prodotto testo; verifica il PDF")
             body = "\n" + "\n".join(sections)
-            identity.update(body_sha256=digest(body.encode()), textless_pages=sorted(textless))
+            identity.update(body_sha256=digest(body.encode()), textless_pages=sorted(textless),
+                            plain_text_pages=plain_pages)
             markdown = PREFIX + json.dumps(identity, sort_keys=True) + " -->\n" + body
     warn_missing(textless)
+    warn_plain(plain_pages)
     if output is not None:
         atomic_write(output, markdown.encode("utf-8"), previous)
     return markdown, False
@@ -148,6 +167,12 @@ def convert(source, output=None, *, pages=None, force=False):
 def warn_missing(pages):
     if pages:
         print("avviso: pagine senza testo estraibile (OCR non eseguito): " +
+              ", ".join(map(str, pages)), file=sys.stderr)
+
+
+def warn_plain(pages):
+    if pages:
+        print("avviso: struttura semplificata per conservare il testo, pagine: " +
               ", ".join(map(str, pages)), file=sys.stderr)
 
 

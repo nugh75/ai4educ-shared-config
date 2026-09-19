@@ -72,6 +72,21 @@ class ConversionTests(unittest.TestCase):
             self.assertIn(part, text)
         self.assertEqual(self.md.read_text(), text)
 
+    def test_incomplete_layout_output_falls_back_to_complete_native_text(self):
+        small = self.root / "small.pdf"
+        with pymupdf.open() as doc:
+            doc.new_page().insert_text((50, 60), "Testo piccolo da conservare integralmente", fontsize=2)
+            doc.save(small)
+        output = small.with_suffix(".md")
+        warning = io.StringIO()
+        with contextlib.redirect_stderr(warning), \
+             patch("pymupdf4llm.to_markdown", return_value=[{"text": "Testo piccolo"}]):
+            text, _ = pdf2md.convert(small, output)
+            self.assertTrue(pdf2md.convert(small, output)[1])
+        self.assertIn("Testo piccolo da conservare integralmente", text)
+        self.assertEqual(pdf2md.metadata(output.read_bytes())["plain_text_pages"], [1])
+        self.assertIn("struttura semplificata", warning.getvalue())
+
     def test_cache_hash_not_mtime_and_force(self):
         pdf2md.convert(self.pdf, self.md)
         before = self.md.stat().st_mtime_ns

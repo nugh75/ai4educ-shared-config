@@ -90,6 +90,11 @@ protocollo sia un hook universale per Codex, pi o OpenCode.
   il contenuto visivo sia stato recuperato.
 - Titoli, tabelle e ordine di lettura sono ricostruiti: verificare il PDF per
   citazioni, impaginazioni complesse o informazioni contenute nelle immagini.
+- Per pagina si confrontano le parole del Markdown con il testo nativo. Se
+  ne viene conservato meno del 98%, si usa il testo nativo ordinato, rinunciando
+  alla ricostruzione del layout. Le pagine sono elencate in `plain_text_pages`
+  e segnalate su stderr. È un controllo di completezza lessicale, non una
+  validazione semantica o della correttezza dell'OCR.
 - Il risparmio di token dipende dal documento e dal lettore: nessuna garanzia
   quantitativa di riduzione 4×.
 
