@@ -1,0 +1,2 @@
+# Tested conversion engine. Layout inference and OCR are disabled at runtime.
+pymupdf4llm==1.28.2

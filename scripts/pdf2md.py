@@ -1,151 +1,177 @@
 #!/usr/bin/env python3
-"""pdf2md — converte PDF in Markdown preservando struttura (Token Optimization 4.1).
-
-Preserva: capitoli/titoli (da dimensioni font relativamente al corpo), grassello,
-corsivo, elenchi puntati/numerati, paragrafi. ROI ~4x vs lettura visiva del PDF.
-
-Uso:
-    pdf2md file.pdf                 # crea file.md accanto al PDF (se assente o datato)
-    pdf2md file.pdf -o out.md       # destinazione esplicita
-    pdf2md file.pdf --force         # riconverte anche se il .md è aggiornato
-    pdf2md file.pdf --stdout        # stampa a video senza salvare
-"""
+"""Convert local, text-based PDFs to Markdown without OCR or network calls."""
 import argparse
+import contextlib
+import hashlib
+import importlib.metadata
+import json
 import os
-import statistics
+from pathlib import Path
+import re
 import sys
+import tempfile
 
-import pymupdf  # fitz deprecato
-
-BULLET_PREFIXES = ("•", "●", "▪", "◦", "‣", "·", "○", "■", "□")
-
-
-def span_flags(span):
-    """Ritorna (bold, italic) da un span PyMuPDF."""
-    f = span.get("flags", 0)
-    font = span.get("font", "").lower()
-    bold = bool(f & 16) or "bold" in font or "black" in font
-    italic = bool(f & 2) or "italic" in font or "oblique" in font
-    return bold, italic
+VERSION = "1"
+PREFIX = "<!-- pdf2md "
 
 
-def line_to_markdown(line, body_size):
-    """Converte una riga (lista di span) in markdown con inline bold/italic."""
-    parts = []
-    for span in line:
-        text = span["text"]
-        if not text.strip():
-            if parts:
-                parts.append(" ")
-            continue
-        bold, italic = span_flags(span)
-        if bold and italic:
-            text = f"***{text.strip()}***"
-        elif bold:
-            text = f"**{text.strip()}**"
-        elif italic:
-            text = f"*{text.strip()}*"
-        parts.append(text)
-    return "".join(parts).strip()
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
 
 
-def heading_level(size, bold, body_size, max_size):
-    """Livello di titolo in base al rapporto fra dimensione font e corpo."""
-    if size >= max_size - 0.5:
+def parse_pages(value, count):
+    """Accept one-based pages/ranges; return sorted, unique zero-based indices."""
+    if value is None:
+        return list(range(count))
+    selected = set()
+    for part in value.split(","):
+        match = re.fullmatch(r"\s*(\d+)(?:\s*-\s*(\d+))?\s*", part)
+        if not match:
+            raise ValueError("pagine non valide: usa ad esempio 1-3,5")
+        start = int(match[1])
+        end = int(match[2] or match[1])
+        if not 1 <= start <= end <= count:
+            raise ValueError(f"intervallo pagine fuori limite (1-{count}): {part}")
+        selected.update(range(start - 1, end))
+    return sorted(selected)
+
+
+def existing_output(path):
+    """Never follow output symlinks, including dangling ones."""
+    if path.is_symlink():
+        raise ValueError(f"destinazione symlink non consentita: {path}")
+    return path.read_bytes() if path.exists() else None
+
+
+def metadata(content):
+    if content is None:
+        return None
+    try:
+        first, body = content.decode("utf-8").split("\n", 1)
+        if not first.startswith(PREFIX) or not first.endswith(" -->"):
+            return None
+        value = json.loads(first[len(PREFIX):-4])
+        if not isinstance(value, dict) or value.get("body_sha256") != digest(body.encode()):
+            return None
+        return value
+    except (ValueError, UnicodeError):
+        return None
+
+
+def atomic_write(path, content, previous):
+    """Publish a complete file; refuse an output changed during conversion."""
+    fd, temp = tempfile.mkstemp(prefix=".pdf2md-", dir=path.parent)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if existing_output(path) != previous:
+            raise ValueError("destinazione modificata durante la conversione; riprova")
+        if previous is None:
+            os.link(temp, path)
+        else:
+            os.replace(temp, path)
+    finally:
+        Path(temp).unlink(missing_ok=True)
+
+
+def convert(source, output=None, *, pages=None, force=False):
+    """Return (Markdown, cache_hit); output=None performs no filesystem writes."""
+    source = Path(source).expanduser().resolve(strict=True)
+    if source.suffix.lower() != ".pdf":
+        raise ValueError("la sorgente deve essere un file PDF")
+    previous = None
+    if output is not None:
+        output = Path(output).expanduser().absolute()
+        if output.suffix.lower() != ".md":
+            raise ValueError("la destinazione deve avere estensione .md")
+        if output.resolve() == source or (output.exists() and output.samefile(source)):
+            raise ValueError("la destinazione coincide con il PDF sorgente")
+        previous = existing_output(output)
+        if previous is not None and metadata(previous) is None and not force:
+            raise ValueError("Markdown esistente non gestito o modificato: scegli -o oppure --force")
+
+    # Native libraries must not pollute --stdout or the hook's JSON protocol.
+    with contextlib.redirect_stdout(sys.stderr):
+        try:
+            import pymupdf
+            import pymupdf4llm
+        except ImportError as exc:
+            raise ValueError("dipendenze mancanti: installa requirements/pdf2md.txt nella venv") from exc
+        pymupdf4llm.use_layout(False)
+        data = source.read_bytes()
+        with pymupdf.open(stream=data, filetype="pdf") as doc:
+            if not doc.is_pdf:
+                raise ValueError("il file non contiene un PDF valido")
+            if doc.needs_pass:
+                raise ValueError("PDF protetto da password: fornisci una copia sbloccata")
+            selected = parse_pages(pages, doc.page_count)
+            identity = {
+                "version": VERSION,
+                "engine": importlib.metadata.version("pymupdf4llm"),
+                "pymupdf": importlib.metadata.version("pymupdf"),
+                "source_sha256": digest(data),
+                "pages": [p + 1 for p in selected],
+            }
+            saved = metadata(previous)
+            if not force and saved and all(saved.get(k) == v for k, v in identity.items()):
+                warn_missing(saved.get("textless_pages", []))
+                return previous.decode("utf-8"), True
+            textless = [p + 1 for p in selected if not doc[p].get_text().strip()]
+            if len(textless) == len(selected):
+                raise ValueError("nessun testo estraibile: PDF vuoto o scansionato; serve OCR separato")
+            chunks = pymupdf4llm.to_markdown(
+                doc, pages=selected, page_chunks=True, show_progress=False,
+                # Legacy extraction has no OCR; use_ocr only applies to layout mode.
+                write_images=False, embed_images=False, margins=0,
+            )
+            sections = []
+            for page, chunk in zip(selected, chunks, strict=True):
+                text = chunk["text"].strip()
+                if page + 1 in textless or not text:
+                    if page + 1 not in textless:
+                        textless.append(page + 1)
+                    text = "[Nessun testo estraibile: pagina vuota o scansione; OCR non eseguito.]"
+                sections.append(f"<!-- pagina {page + 1} -->\n\n{text}\n")
+            if len(textless) == len(selected):
+                raise ValueError("la conversione non ha prodotto testo; verifica il PDF")
+            body = "\n" + "\n".join(sections)
+            identity.update(body_sha256=digest(body.encode()), textless_pages=sorted(textless))
+            markdown = PREFIX + json.dumps(identity, sort_keys=True) + " -->\n" + body
+    warn_missing(textless)
+    if output is not None:
+        atomic_write(output, markdown.encode("utf-8"), previous)
+    return markdown, False
+
+
+def warn_missing(pages):
+    if pages:
+        print("avviso: pagine senza testo estraibile (OCR non eseguito): " +
+              ", ".join(map(str, pages)), file=sys.stderr)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="PDF → Markdown locale, senza OCR.")
+    parser.add_argument("pdf", type=Path)
+    target = parser.add_mutually_exclusive_group()
+    target.add_argument("-o", "--output", type=Path)
+    target.add_argument("--stdout", action="store_true")
+    parser.add_argument("--pages", help="pagine 1-based: ad esempio 1-3,5")
+    parser.add_argument("--force", action="store_true", help="riconverte e autorizza la sostituzione del Markdown")
+    args = parser.parse_args(argv)
+    output = None if args.stdout else (args.output or args.pdf.with_suffix(".md"))
+    try:
+        markdown, cached = convert(args.pdf, output, pages=args.pages, force=args.force)
+        if args.stdout:
+            sys.stdout.write(markdown)
+        else:
+            print(f"ok: {output} ({'cache valida' if cached else 'convertito'})", file=sys.stderr)
+        return 0
+    except Exception as exc:
+        print(f"errore: {exc}", file=sys.stderr)
         return 1
-    ratio = size / body_size
-    if ratio >= 1.5:
-        return 2
-    if ratio >= 1.2 and bold:
-        return 3
-    return 0
-
-
-def pdf_to_markdown(path):
-    doc = pymupdf.open(path)
-    all_sizes = []
-    pages_lines = []  # per pagina: lista di (block_id, [righe markdown], primo_span)
-    for page in doc:
-        blocks = page.get_text("dict", sort=True)["blocks"]
-        page_data = []
-        for b in blocks:
-            if b.get("type") != 0:
-                continue
-            block_lines = []
-            for line in b["lines"]:
-                spans = [s for s in line["spans"] if s["text"].strip()]
-                if not spans:
-                    continue
-                block_lines.append(spans)
-                all_sizes.extend(s["size"] for s in spans)
-            if block_lines:
-                page_data.append((b["number"], block_lines))
-        pages_lines.append(page_data)
-
-    if not all_sizes:
-        return ""
-    body_size = statistics.median(all_sizes)
-    max_size = max(all_sizes)
-
-    out = []
-    for page_data in pages_lines:
-        for _block_id, block_lines in page_data:
-            # dimensione media e bold della riga per riconoscere i titoli
-            first_spans = block_lines[0]
-            line_size = statistics.mean(s["size"] for s in first_spans)
-            line_bold = all(s.get("flags", 0) & 16 for s in first_spans)
-            md_lines = [line_to_markdown(l, body_size) for l in block_lines]
-            text = " ".join(md_lines).replace("  ", " ").strip()
-            if not text:
-                continue
-
-            level = heading_level(line_size, line_bold, body_size, max_size)
-            raw = "".join(s["text"] for s in first_spans).strip()
-            is_list = raw.startswith(BULLET_PREFIXES) or (
-                len(raw) > 2 and raw[0].isdigit() and raw[1] in ".)")
-            if level and len(text) < 120:
-                out.append(f"\n{'#' * level} {text.lstrip('# ')}\n")
-            elif is_list:
-                out.append(f"- {text.lstrip(''.join(BULLET_PREFIXES) + ' ')}")
-            else:
-                out.append(f"\n{text}\n")
-
-    title = os.path.basename(path)
-    header = (f"<!-- Convertito da {title} ({doc.page_count} pagine) con pdf2md -->\n\n"
-              f"# {os.path.splitext(title)[0]}\n")
-    doc.close()
-    return header + "\n".join(out) + "\n"
-
-
-def main():
-    p = argparse.ArgumentParser(description="PDF → Markdown (capitoli, grassello, corsivo).")
-    p.add_argument("pdf", help="file PDF di input")
-    p.add_argument("-o", "--output", help="file .md di destinazione (default: accanto al PDF)")
-    p.add_argument("--force", action="store_true", help="riconverte anche se il .md esiste ed è aggiornato")
-    p.add_argument("--stdout", action="store_true", help="stampa il markdown invece di salvarlo")
-    args = p.parse_args()
-
-    pdf = os.path.abspath(args.pdf)
-    if not os.path.exists(pdf):
-        sys.exit(f"errore: {pdf} non trovato")
-    md_path = args.output or os.path.splitext(pdf)[0] + ".md"
-
-    fresh = (os.path.exists(md_path)
-             and os.path.getmtime(md_path) >= os.path.getmtime(pdf))
-    if fresh and not args.force and not args.stdout:
-        print(f"ok: {md_path} già aggiornato", file=sys.stderr)
-        return
-
-    md = pdf_to_markdown(pdf)
-    if not md:
-        sys.exit("errore: nessun testo estratto (PDF scansionato? serve OCR)")
-    if args.stdout:
-        print(md)
-    else:
-        with open(md_path, "w") as f:
-            f.write(md)
-        print(f"ok: {md_path} ({os.path.getsize(md_path) // 1024} KB)", file=sys.stderr)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

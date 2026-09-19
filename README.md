@@ -37,6 +37,11 @@ projects.txt               ← elenco dei progetti
 ./scripts/sync-global.sh --check
 ```
 
+## Lettura PDF per gli agenti
+
+`scripts/pdf2md` converte PDF in Markdown locale con cache verificata e riferimenti
+alle pagine. Installazione, hook Claude e limiti: [PDF → Markdown](docs/pdf-to-markdown.md).
+
 ## File generati vs manuali
 
 | File | Generato? | Sincronizzato da |

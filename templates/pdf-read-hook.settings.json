@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /home/nugh75/ai4educ-shared-config/scripts/pdf_read_hook.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

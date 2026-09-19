@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+REPO_DIR="$(dirname "$(dirname "$SCRIPT_PATH")")"
+exec "$REPO_DIR/.venv-pdf2md/bin/python" "$REPO_DIR/scripts/pdf2md.py" "$@"

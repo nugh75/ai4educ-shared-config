@@ -38,9 +38,10 @@ primo prompt = Token Leakage (MCP inutilizzati, skill bloatate). Audit: `TOKEN-B
 - **genimg CLI** (ex MCP): generazione/modifica immagini da terminale. Sintassi:
   `genimg "<prompt>" -o out.png [--engine openrouter|gemini|openai] [--model id] [--input img] [--aspect 16:9] [--size 1K]`.
   I path relativi finiscono in `immagini/`. Disponibile in `~/bin/genimg` per tutti gli agenti (zero token di baseline).
-- **PDF-to-Text Hook**: leggere un PDF di 300 pagine da costi ~600k token in parsing visivo;
-  un hook deterministico che estrae il testo lo riduce a ~150k (ROI 4x). Da implementare
-  come hook su operazione di read (carta 4.1 del backlog).
+- **PDF-to-Text Hook**: `scripts/pdf2md` converte localmente PDF con testo in
+  Markdown strutturato; l'hook Claude instrada `Read` verso la CLI e la cache.
+  OCR separato per scansioni; risparmio token dipendente dal documento, non
+  quantificato. Installazione, confronto librerie e limiti: `docs/pdf-to-markdown.md`.
 - **Graph-Based Retrieval**: sopra la soglia di ~500 file, la ricerca "alla cieca" spreca
   token in letture ridondanti. Map-first con grafi (code graph / graphify) porta il modello
   dritto al nodo rilevante.
@@ -82,5 +83,5 @@ bloatware di efficienza.
 | 2.4 Audit Checklist | ✅ blocco indice + questo doc |
 | 3.1 Nested Index refactor | ✅ indice a 73 righe (docs: karpathy-guidelines, interaction-modes) |
 | 3.2 MCP → CLI (genimg) | ✅ MCP rimosso da Codex, CLI `genimg` operativa |
-| 4.1 PDF-to-Text Hook | ⏸️ rimandato all'uso reale (cartella piano): bozza `scripts/pdf2md.py` pronta; valutare repo esistenti (`pymupdf4llm`, `marker`, `docling`) prima di finalizzare hook + MD con struttura |
+| 4.1 PDF-to-Text Hook | ✅ CLI PyMuPDF4LLM, cache verificata, pagine e hook Claude; confronto librerie e verifiche in `docs/pdf-to-markdown.md` |
 | 4.2 Graph-Based Retrieval | ✅ regola attiva nell'indice (soglia 500 file → proporre skill `graphify`) |
