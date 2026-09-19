@@ -1,8 +1,8 @@
 # Piano refactor Carta 3.1 — Nested Index
 
-> Piano esecutivo per la ristrutturazione di `blocks/global-guidelines.md`.
-> Da eseguire come PRIMA attività della sessione. Al termine, rimuovere il blocco
-> "Pending Task" dall'indice e questa riga di avviso.
+> Piano storico: refactor completato il 2026-09-18 (commit `f34d01a` e `b1361fb`).
+> Il blocco "Pending Task" è già stato rimosso. I passi seguenti documentano
+> l'intervento eseguito e non sono attività pendenti.
 
 ## Obiettivo
 
