@@ -79,8 +79,15 @@ class ConversionTests(unittest.TestCase):
             doc.save(small)
         output = small.with_suffix(".md")
         warning = io.StringIO()
+
+        def lossy_layout(doc, **kwargs):
+            page = doc[0]
+            page.add_redact_annot(page.rect)
+            page.apply_redactions()
+            return [{"text": "Testo piccolo"}]
+
         with contextlib.redirect_stderr(warning), \
-             patch("pymupdf4llm.to_markdown", return_value=[{"text": "Testo piccolo"}]):
+             patch("pymupdf4llm.to_markdown", side_effect=lossy_layout):
             text, _ = pdf2md.convert(small, output)
             self.assertTrue(pdf2md.convert(small, output)[1])
         self.assertIn("Testo piccolo da conservare integralmente", text)

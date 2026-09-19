@@ -12,7 +12,7 @@ import re
 import sys
 import tempfile
 
-VERSION = "2"
+VERSION = "3"
 PREFIX = "<!-- pdf2md "
 
 
@@ -128,7 +128,10 @@ def convert(source, output=None, *, pages=None, force=False):
                 warn_missing(saved.get("textless_pages", []))
                 warn_plain(saved.get("plain_text_pages", []))
                 return previous.decode("utf-8"), True
-            textless = [p + 1 for p in selected if not doc[p].get_text().strip()]
+            # The layout engine may modify the in-memory PDF while extracting.
+            # Capture the original text before invoking it, including for fallback.
+            native_texts = {p: doc[p].get_text("text", sort=True).strip() for p in selected}
+            textless = [p + 1 for p in selected if not native_texts[p]]
             if len(textless) == len(selected):
                 raise ValueError("nessun testo estraibile: PDF vuoto o scansionato; serve OCR separato")
             chunks = pymupdf4llm.to_markdown(
@@ -140,7 +143,7 @@ def convert(source, output=None, *, pages=None, force=False):
             plain_pages = []
             for page, chunk in zip(selected, chunks, strict=True):
                 text = chunk["text"].strip()
-                native = doc[page].get_text("text", sort=True).strip()
+                native = native_texts[page]
                 # Some PDFs lose text in layout reconstruction (OCR layers,
                 # tiny fonts, overlays). Prefer complete text over layout.
                 if native and (not text or retained_words(native, text) < 0.98):
