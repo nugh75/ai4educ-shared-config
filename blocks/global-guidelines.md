@@ -29,6 +29,12 @@ Abbinare l'intelligenza del modello alla complessità del task: mai frontier per
 
 **Mid-Session Switch Penalty**: non cambiare modello o effort level a conversazione in corso — il nuovo modello ricarica e rielabora tutta la storia. Scegliere il modello all'inizio in base al task.
 
+## Sudo in deploy (reminder obbligatorio per ogni agente)
+
+- Nessun agente può inserire una password sudo (terminali non interattivi): i passi sudo di un deploy o di un aggiornamento (riavvii di servizi, aggiornamenti di config di sistema) restano SEMPRE all'utente.
+- Se il deploy o il flusso di lavoro prevede un passo sudo, ricordarlo all'utente PRIMA di partire (quale comando dovrà dare a mano) e ripeterlo nel riepilogo finale con il comando esatto (es. in counselorbot-sbs: `sudo ./update_nginx.sh` dopo `./deploy.sh`; `r-cl-ag` per riavviare cloudflared-agent).
+- Non tentare workaround (askpass, echo della password, `-S`): è sempre l'utente a lanciare il comando.
+
 ## Golden Rule: AI for Judgment, Code for Execution
 
 Usare l'AI per il **judgment** (decisioni, progettazione, analisi); il **codice** per l'esecuzione. Ogni routine ripetitiva judgment-free è candidata alla migrazione a script Python/Bash deterministico: ripetibilità 100%, costo ricorrente zero.
