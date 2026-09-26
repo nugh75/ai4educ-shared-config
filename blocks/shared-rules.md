@@ -36,6 +36,17 @@ The user works alone and reviews and merges from the GitHub mobile app: each pul
 - Add or update tests when changing application behaviour or fixing a bug.
 - Clearly report any checks that could not be run and explain why.
 
+## Live dev environment (SSH)
+
+The user often works over SSH from another machine: to see work in progress, use a live dev environment next to production, never production itself.
+
+- Run the app in dev mode with hot reload (e.g. `uvicorn --reload`, `next dev`, `vite`) bound to `127.0.0.1` on dedicated ports, different from production; check they are free first (`ss -ltn`).
+- Isolate data: a separate database or data directory (e.g. `<name>_test`), never production data. Point dev to it through dev-only env files (e.g. `.env.development`) so production defaults stay unchanged.
+- Do not rebuild or restart production containers (`docker compose up`) to show a change in progress.
+- Put the start commands in `scripts/dev-*.sh` and document ports, data, start/stop and limits in `docs/operations/live-dev-environment.md`; reference it from `CONTEXT.md`. Reference implementation: `counselorbot-sbs`.
+- Give the user the exact tunnel command and URL, e.g. `ssh -N -L 3107:127.0.0.1:3107 -L 8002:127.0.0.1:8002 <user>@<server>` then `http://localhost:3107`.
+- At the end of the session say whether dev processes are still running and how to stop them.
+
 ## Docker
 
 - If the project uses Docker, rebuild the relevant images whenever Dockerfiles, Compose files, dependencies, build scripts, environment build variables, or application code copied into the image are changed.
