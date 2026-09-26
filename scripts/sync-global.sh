@@ -48,6 +48,7 @@ Quando modifichi \`blocks/shared-rules.md\` o \`blocks/global-guidelines.md\`:
 2. \`r-cl-ag\`                              — riavvia l'host-agent (cloudflared-agent) dopo modifiche al codice
 3. \`./scripts/sync-global.sh\`        — aggiorna i file globali (~/.pi, ~/.claude, ~/.codex, ~/.opencode)
 4. \`./scripts/sync-project.sh --all\`  — propaga le regole di processo a tutti i progetti
+5. \`./scripts/commit-sync.sh\`        — committa AGENTS.md/CLAUDE.md generati sul branch di default (\`--dry-run\` prima)
 
 Le skill non stanno in questi file: ogni agente legge una root diversa
 (\`~/.claude/skills\`, \`~/.agents/skills\`, \`~/.pi/agent/skills\`, \`~/.config/opencode/skills\`).

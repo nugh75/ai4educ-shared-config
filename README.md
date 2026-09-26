@@ -19,8 +19,9 @@ projects.txt               ← elenco dei progetti
 ## Uso
 
 ### Modificare le regole di processo
-1. Modifica `blocks/shared-rules.md`
-2. `./scripts/sync-project.sh --all`
+1. In un worktree modifica `blocks/shared-rules.md` e apri una PR: il checkout principale resta su `main`, perché console e sync lo leggono dal vivo
+2. Dopo il merge: `git pull`, poi `./scripts/sync-project.sh --all`
+3. `./scripts/commit-sync.sh` — committa `AGENTS.md`/`CLAUDE.md` generati direttamente sul branch di default dove è sicuro (`--dry-run` per vedere prima)
 
 ### Modificare le linee guida globali
 1. Modifica `blocks/global-guidelines.md`
