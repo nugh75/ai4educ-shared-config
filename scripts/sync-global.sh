@@ -95,7 +95,9 @@ sync_all() {
             current_hash=$(grep -oP 'Source: blocks/global-guidelines.md \(hash: \K[a-f0-9]+' "$target_path" 2>/dev/null || echo "unknown")
         fi
 
-        if [[ "$current_hash" == "$GUIDELINES_HASH" ]]; then
+        # Confronta tutto il testo generato: l'hash copre solo global-guidelines.md,
+        # non la sezione "Sync delle istruzioni" scritta da questo script.
+        if [[ -f "$target_path" && "$(cat "$target_path")" == "$generated" ]]; then
             echo -e "  ${GREEN}✓${NC} $tool_name: $target_path (già aggiornato)"
         else
             echo "$generated" > "$target_path"
@@ -118,6 +120,8 @@ sync_skills() {
 check_all() {
     read_guidelines
     local ok=true
+    local generated
+    generated=$(generate)
 
     declare -A TARGETS=(
         ["$HOME/.pi/agent/AGENTS.md"]="Pi"
@@ -137,7 +141,7 @@ check_all() {
 
         local current_hash
         current_hash=$(grep -oP 'Source: blocks/global-guidelines.md \(hash: \K[a-f0-9]+' "$target_path" 2>/dev/null || echo "unknown")
-        if [[ "$current_hash" != "$GUIDELINES_HASH" ]]; then
+        if [[ "$(cat "$target_path")" != "$generated" ]]; then
             echo -e "  ${RED}✗${NC} $tool_name: stale ($current_hash → $GUIDELINES_HASH)"
             ok=false
         else
