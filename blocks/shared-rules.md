@@ -2,7 +2,7 @@
 
 - Before starting, check `git status`, the current branch, and repository instructions.
 - Do not overwrite or remove unrelated existing changes.
-- Use a separate branch for large, risky, multi-file, architectural, or experimental changes. Use clear names such as `feature/...`, `fix/...`, `refactor/...`, or `docs/...`.
+- Never commit directly to `main`/`master`: every change goes on a branch created from an up-to-date default branch, named `feature/...`, `fix/...`, `refactor/...`, `docs/...`, or `chore/...`.
 
 ## Commits
 
@@ -17,6 +17,18 @@
   - `chore: update dependencies`
 - Review changes with `git diff` and `git diff --staged` before committing.
 - Do not use vague commit messages such as `update`, `fix`, or `changes`.
+
+## Pull requests (solo developer)
+
+The user works alone and reviews and merges from the GitHub mobile app: each pull request is the readable chapter of the project history.
+
+- When the work is done, push the branch and open a pull request to the default branch with `gh pr create`. Give the user the PR link.
+- PR title in Conventional Commit form (`feat: ...`, `fix: ...`): it is what the app lists and what the merge commit keeps.
+- PR body short and readable on a phone: Obiettivo, Modifiche principali, Test eseguiti, Passi manuali (sudo, deploy), Issue collegate (`Closes #N`).
+- Do not merge the PR yourself unless the user explicitly asks. The user merges from the app with "Create a merge commit".
+- When the user says it is merged, verify with `gh pr view <N> --json state` before switching branch (the app sometimes does not register the confirm), then `git switch <default> && git pull --ff-only` and delete the local branch.
+- If the repository has no GitHub remote, keep the branch local and tell the user.
+- `AGENTS.md`/`CLAUDE.md` modified by the ai4educ sync: commit them alone as `chore: sync shared rules` on the current branch, never mixed with other changes.
 
 ## Validation
 
@@ -50,5 +62,5 @@ Before finishing:
 1. Check `git status`.
 2. Run the relevant verification commands.
 3. Create separate commits by change type.
-4. Push the branch to GitHub.
-5. Provide a short summary of changed files, checks run, Docker rebuild status, commits created, branch used, and any remaining issues.
+4. Push the branch to GitHub and open or update its pull request.
+5. Provide a short summary of changed files, checks run, Docker rebuild status, commits created, branch used, PR link, and any remaining issues.
