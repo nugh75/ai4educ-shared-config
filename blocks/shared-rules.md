@@ -23,6 +23,7 @@
 The user works alone and reviews and merges from the GitHub mobile app: each pull request is the readable chapter of the project history.
 
 - When the work is done, push the branch and open a pull request to the default branch with `gh pr create`. Give the user the PR link.
+- If the repository is linked to a GitHub Project board, add the PR to it: list the boards with `gh api graphql -f query='{repository(owner:"<owner>",name:"<repo>"){projectsV2(first:5){nodes{title}}}}' --jq '.data.repository.projectsV2.nodes[].title'` and pass `--project "<title>"` to `gh pr create` for each one. The board moves it to Done on merge.
 - PR title in Conventional Commit form (`feat: ...`, `fix: ...`): it is what the app lists and what the merge commit keeps.
 - PR body short and readable on a phone: Obiettivo, Modifiche principali, Test eseguiti, Passi manuali (sudo, deploy), Issue collegate (`Closes #N`).
 - Do not merge the PR yourself unless the user explicitly asks. The user merges from the app with "Create a merge commit".
