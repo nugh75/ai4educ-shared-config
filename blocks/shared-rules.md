@@ -2,7 +2,7 @@
 
 - Before starting, check `git status`, the current branch, and repository instructions.
 - Do not overwrite or remove unrelated existing changes.
-- Never commit directly to `main`/`master`: every change goes on a branch created from an up-to-date default branch, named `feature/...`, `fix/...`, `refactor/...`, `docs/...`, or `chore/...`.
+- Never commit directly to `main`/`master` (only exception: the ai4educ sync commit, see Pull requests): every change goes on a branch created from an up-to-date default branch, named `feature/...`, `fix/...`, `refactor/...`, `docs/...`, or `chore/...`.
 
 ## Commits
 
@@ -28,7 +28,7 @@ The user works alone and reviews and merges from the GitHub mobile app: each pul
 - Do not merge the PR yourself unless the user explicitly asks. The user merges from the app with "Create a merge commit".
 - When the user says it is merged, verify with `gh pr view <N> --json state` before switching branch (the app sometimes does not register the confirm), then `git switch <default> && git pull --ff-only` and delete the local branch.
 - If the repository has no GitHub remote, keep the branch local and tell the user.
-- `AGENTS.md`/`CLAUDE.md` modified by the ai4educ sync: commit them alone as `chore: sync shared rules` on the current branch, never mixed with other changes.
+- Exception for the ai4educ sync: `AGENTS.md`/`CLAUDE.md` rewritten by `sync-project.sh` are generated, so they need no PR. Commit only those two files as `chore: sync shared rules` directly on the default branch and push, when the repository is on its default branch and even with its remote; otherwise commit them alone on the current branch. Never mix them with other changes.
 
 ## Validation
 
