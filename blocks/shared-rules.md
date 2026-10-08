@@ -4,6 +4,11 @@
 - Do not overwrite or remove unrelated existing changes.
 - Never commit directly to `main`/`master` (only exception: the ai4educ sync commit, see Pull requests): every change goes on a branch created from an up-to-date default branch, named `feature/...`, `fix/...`, `refactor/...`, `docs/...`, or `chore/...`.
 
+## Language Standard
+
+- All persistent repository artifacts (git commit messages, pull request titles and descriptions, GitHub issues, documentation files in `docs/`, and project journal entries) must be written in English.
+- Dual-language separation: interactive conversation with the user (in chat, status updates, terminal prompts) may be conducted in Italian or the user's preferred language.
+
 ## Commits
 
 - At the end of every coding session, create one or more commits and push them to GitHub.
@@ -25,7 +30,7 @@ The user works alone and reviews and merges from the GitHub mobile app: each pul
 - When the work is done, push the branch and open a pull request to the default branch with `gh pr create`. Give the user the PR link.
 - If the repository is linked to a GitHub Project board, add the PR to it: list the boards with `gh api graphql -f query='{repository(owner:"<owner>",name:"<repo>"){projectsV2(first:5){nodes{title}}}}' --jq '.data.repository.projectsV2.nodes[].title'` and pass `--project "<title>"` to `gh pr create` for each one. The board moves it to Done on merge.
 - PR title in Conventional Commit form (`feat: ...`, `fix: ...`): it is what the app lists and what the merge commit keeps.
-- PR body short and readable on a phone: Obiettivo, Modifiche principali, Test eseguiti, Passi manuali (sudo, deploy), Issue collegate (`Closes #N`).
+- PR body short and readable on a phone: Objective, Key Changes, Verification / Tests Performed, Manual Steps (sudo, deploy), Related Issues (`Closes #N`).
 - Do not merge the PR yourself unless the user explicitly asks. The user merges from the app with "Create a merge commit".
 - When the user says it is merged, verify with `gh pr view <N> --json state` before switching branch (the app sometimes does not register the confirm), then `git switch <default> && git pull --ff-only` and delete the local branch.
 - If the repository has no GitHub remote, keep the branch local and tell the user.
