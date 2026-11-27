@@ -16,11 +16,11 @@
 /home/nugh75/didattica-demo-ticket-ricambi
 /home/nugh75/OpenMontage/openmontage_engine
 /home/nugh75/praxis-kth-interviews
-/home/nugh75/Prin-orienta+
-/home/nugh75/Prin-orienta+/doaj-pp-cli
-/home/nugh75/Prin-orienta+/opac-sbn-pp-cli
-/home/nugh75/Prin-orienta+/openalex-pp-cli
-/home/nugh75/Prin-orienta+/semantic-scholar-pp-cli
+/home/nugh75/prin-articolo-orienta-plus
+/home/nugh75/prin-articolo-orienta-plus/doaj-pp-cli
+/home/nugh75/prin-articolo-orienta-plus/opac-sbn-pp-cli
+/home/nugh75/prin-articolo-orienta-plus/openalex-pp-cli
+/home/nugh75/prin-articolo-orienta-plus/semantic-scholar-pp-cli
 /home/nugh75/q-ai
 /home/nugh75/-qtimes
 /home/nugh75/scontrini
