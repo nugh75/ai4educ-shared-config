@@ -7,8 +7,8 @@
 /home/nugh75/cnr-articolo-quantitativo
 /home/nugh75/counselorbot-alpha-v0.1-bussola-20241108
 /home/nugh75/counselorbot-sbs
-/home/nugh75/Daniele
-/home/nugh75/Esame Piattaforme digitali
+/home/nugh75/sito-daniele
+/home/nugh75/didattica-esame-piattaforme-digitali
 /home/nugh75/guida-ai
 /home/nugh75/hermes/hermes-agent
 /home/nugh75/hermes/hermes-workspace
