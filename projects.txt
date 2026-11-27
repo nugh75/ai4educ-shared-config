@@ -4,7 +4,7 @@
 /home/nugh75/ai4educ-chatbots
 /home/nugh75/ai4educ-console
 /home/nugh75/Ai-michelangelo/canvas-lms
-/home/nugh75/CNR-articolo-quantitativo
+/home/nugh75/cnr-articolo-quantitativo
 /home/nugh75/counselorbot-alpha-v0.1-bussola-20241108
 /home/nugh75/counselorbot-sbs
 /home/nugh75/Daniele
@@ -21,13 +21,13 @@
 /home/nugh75/prin-articolo-orienta-plus/opac-sbn-pp-cli
 /home/nugh75/prin-articolo-orienta-plus/openalex-pp-cli
 /home/nugh75/prin-articolo-orienta-plus/semantic-scholar-pp-cli
-/home/nugh75/q-ai
+/home/nugh75/cnr-questionari-ai-analisi
 /home/nugh75/-qtimes
 /home/nugh75/scontrini
 /home/nugh75/analisi-pdf
 /home/nugh75/Anatema
-/home/nugh75/Coder
-/home/nugh75/Concorso
+/home/nugh75/coder-agenti-ollama
+/home/nugh75/concorso-scuola-quiz
 /home/nugh75/docker-gemma4-diffusion
 /home/nugh75/ds4
 /home/nugh75/ecps-r
@@ -38,7 +38,7 @@
 /home/nugh75/praxis-survey-live
 /home/nugh75/Presentazione-counselorbot-2
 /home/nugh75/presentazioni-counselorbote
-/home/nugh75/Prin-article-counslorbot
+/home/nugh75/prin-articolo-counselorbot
 /home/nugh75/prin-dati
-/home/nugh75/revisione_articolo_grafos
+/home/nugh75/articolo-grafologia-revisione
 /home/nugh75/risorse-digitali
